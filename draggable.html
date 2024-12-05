@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Image with Draggable Marker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- Header -->
+    <header class="p-8 text-center">
+      <h2 class="text-3xl font-bold mb-4 text-green-900">Get X, Y positions</h2>
+    </header>
+
+    <!-- Main Content -->
+    <main class="px-6 flex justify-center">
+      <!-- Map Container -->
+      <div class="relative inline-block">
+        <!-- Map Image -->
+        <img
+          id="mapImage"
+          src="https://as2.ftcdn.net/v2/jpg/04/96/56/33/1000_F_496563333_4HXzsXSon8WdMolP03Fupt6l3T5YD1qy.jpg"
+          alt="Map"
+          class="w-full max-w-md rounded-md"
+        />
+
+        <!-- Marker -->
+        <div
+          id="mapPin"
+          class="absolute hidden transform -translate-x-1/2 -translate-y-full cursor-pointer transition-all duration-200"
+        >
+          <i class="bi bi-geo-alt-fill text-red-500 text-3xl"></i>
+        </div>
+      </div>
+    </main>
+
+    <!-- Coordinates Display -->
+    <div class="text-center py-4">
+      <p id="coordinates" class="text-lg font-semibold text-gray-700">
+        X: 0, Y: 0
+      </p>
+    </div>
+
+    <footer class="py-2 text-center">
+      <a href="/index.html" class="text-red-500 font-medium text-sm underline">Get back</a>
+    </footer>
+
+    <script>
+      const mapPin = document.getElementById("mapPin");
+      const mapImage = document.getElementById("mapImage");
+      const coordinatesDisplay = document.getElementById("coordinates");
+
+      let isDragging = false;
+
+      // Dragging functionality
+      mapPin.addEventListener("mousedown", (e) => {
+        isDragging = true;
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+          const rect = mapImage.getBoundingClientRect();
+          const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+          const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+
+          mapPin.style.left = `${x}px`;
+          mapPin.style.top = `${y}px`;
+
+          // Update coordinates display
+          const originalX = Math.round((x / rect.width) * mapImage.naturalWidth);
+          const originalY = Math.round((y / rect.height) * mapImage.naturalHeight);
+
+          coordinatesDisplay.textContent = `X: ${originalX}, Y: ${originalY}`;
+        }
+      });
+
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      // Make the marker initially visible and draggable
+      mapPin.classList.remove("hidden");
+
+      // Optionally, you could position the marker at a fixed spot initially
+      mapPin.style.left = "10px"; // example starting position X
+      mapPin.style.top = "20px"; // example starting position Y
+    </script>
+  </body>
+</html>

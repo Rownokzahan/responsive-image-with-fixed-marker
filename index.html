@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Image with Fixed Marker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <header class="p-8 text-center">
+      <h2 class="text-3xl font-bold mb-4 text-green-900">
+        Responsive Image with Dynamic Markers
+      </h2>
+    </header>
+
+    <main class="px-6 flex flex-col items-center justify-center gap-6">
+      <select
+        id="districtSelect"
+        class="p-2 border border-gray-300 rounded h-max"
+      >
+        <option value="" disabled selected>Select Your District</option>
+        <option value="Dhaka">Dhaka</option>
+        <option value="Gazipur">Gazipur</option>
+        <option value="Manikganj">Manikganj</option>
+        <option value="Narayanganj">Narayanganj</option>
+      </select>
+
+      <!-- Map Container -->
+      <div class="relative inline-block">
+        <!-- Map Image -->
+        <img
+          id="mapImage"
+          src="https://as2.ftcdn.net/v2/jpg/04/96/56/33/1000_F_496563333_4HXzsXSon8WdMolP03Fupt6l3T5YD1qy.jpg"
+          alt="Map"
+          class="w-full max-w-md"
+        />
+
+        <!-- Marker -->
+        <div
+          id="mapPin"
+          class="absolute hidden transform -translate-x-1/2 -translate-y-full transition-all duration-500"
+        >
+          <i class="bi bi-geo-alt-fill text-red-500 text-3xl"></i>
+        </div>
+      </div>
+    </main>
+
+    <footer class="py-2 text-center">
+      <a href="/draggable.html" class="text-red-500 font-medium text-sm underline">Get the positions</a>
+    </footer>
+
+    <script>
+      // Coordinates mapping for districts (in absolute positions for original image size)
+      const districtCoordinates = {
+        Dhaka: { x: 417, y: 385 },
+        Gazipur: { x: 412, y: 441 },
+        Manikganj: { x: 356, y: 491 },
+        Narayanganj: { x: 435, y: 492 },
+      };
+
+      // Elements
+      const districtSelect = document.getElementById("districtSelect");
+      const mapPin = document.getElementById("mapPin");
+      const mapImage = document.getElementById("mapImage");
+
+      // Function to update marker position dynamically
+      function updateMarkerPosition(district) {
+        const coordinates = districtCoordinates[district];
+        if (coordinates) {
+          const originalWidth = mapImage.naturalWidth; // Original width of the map
+          const originalHeight = mapImage.naturalHeight; // Original height of the map
+          const currentWidth = mapImage.clientWidth; // Current visible width
+          const currentHeight = mapImage.clientHeight; // Current visible height
+
+          // Calculate relative positions
+          const relativeX = (coordinates.x / originalWidth) * currentWidth;
+          const relativeY = (coordinates.y / originalHeight) * currentHeight;
+
+          // Update marker's position
+          mapPin.style.left = `${relativeX}px`;
+          mapPin.style.top = `${relativeY}px`;
+          mapPin.classList.remove("hidden");
+        } else {
+          mapPin.classList.add("hidden");
+        }
+      }
+
+      // Event listener for district selection
+      districtSelect.addEventListener("change", (event) => {
+        const selectedDistrict = event.target.value;
+        updateMarkerPosition(selectedDistrict);
+      });
+
+      // Handle window resize to reposition the marker
+      window.addEventListener("resize", () => {
+        const selectedDistrict = districtSelect.value;
+        if (selectedDistrict) {
+          updateMarkerPosition(selectedDistrict);
+        }
+      });
+    </script>
+  </body>
+</html>
